@@ -1,0 +1,27 @@
+{
+  "name": "cryptoprovider.fnv1.sample",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "build-prod": "webpack --config webpack.prod.config.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack serve"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@pilotdev/pilot-web-sdk": "@pilotdev/pilot-web-sdk",
+    "rxjs": "7.8.1"
+  },
+  "devDependencies": {
+    "@types/jsrsasign": "10.5.15",
+    "copy-webpack-plugin": "13.0.0",
+    "ts-loader": "9.5.2",
+    "typescript": "5.8.2",
+    "webpack": "5.98.0",
+    "webpack-cli": "6.0.1",
+    "webpack-dev-server": "^5.2.2"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "$schema": "../../node_modules/@pilot-dev/pilot-web-sdk/extensions.config.schema.json",
+  "manifestVersion": 1,
+  "author": "ASCON JSC",
+  "license": "MIT",
+  "title": "cryptoprovider.fnv1",
+  "description": "Demonstrates the creation of a simple signature without a cryptoprovider.",
+  "version": "1.0.0",
+  "extension": {
+    "name": "cryptoprovider_fnv1",
+    "entry": "cryptoprovider_fnv1.js",
+    "modules": [ { "ngModuleName": "CryptoProviderFnv1Extension", "exposedInterface": "ICryptoProvider" } ]
+  }
+}
