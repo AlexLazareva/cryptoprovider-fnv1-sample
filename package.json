@@ -12,7 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@pilotdev/pilot-web-sdk": "@pilotdev/pilot-web-sdk",
+    "@pilotdev/pilot-web-sdk": "^25.13.0",
     "rxjs": "7.8.1"
   },
   "devDependencies": {
