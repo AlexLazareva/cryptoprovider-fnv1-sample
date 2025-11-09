@@ -21,20 +21,6 @@ export function stringToArrayBuffer(string: string): ArrayBuffer {
   return encoder.encode(string);
 }
 
-export function toJsDate(x509Date: string): string {
-  // Извлечение компонентов даты из строки
-  const year = 2000 + parseInt(x509Date.slice(0, 2), 10);
-  const month = parseInt(x509Date.slice(2, 4), 10) - 1; // Месяцы в JavaScript начинаются с 0
-  const day = parseInt(x509Date.slice(4, 6), 10);
-  const hours = parseInt(x509Date.slice(6, 8), 10);
-  const minutes = parseInt(x509Date.slice(8, 10), 10);
-  const seconds = parseInt(x509Date.slice(10, 12), 10);
-
-  // Создание объекта Date
-  const date = new Date(Date.UTC(year, month, day, hours, minutes, seconds));
-  return date.toLocaleDateString();
-}
-
 export function arrayBufferToBase64(buffer: ArrayBuffer): string {
   let binary = '';
   const bytes = new Uint8Array(buffer);

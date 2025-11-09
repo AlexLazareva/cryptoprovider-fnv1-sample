@@ -7,6 +7,14 @@ export class FileSignatureUpdater {
   constructor(private readonly _modifierProvider: IModifierProvider) {
   }
 
+  /**
+   *
+   * @param documentId
+   * @param actualFile
+   * @param signatureBase64
+   * @param publicKeyOid
+   * @param signatureRequestIds
+   */
   setSignToObjectFile(documentId: string, actualFile: IFile, signatureBase64: string, publicKeyOid: string, signatureRequestIds: string[]): Observable<IDataObject[]> {
     const modifier = this._modifierProvider.newModifier();
     const builder = modifier.edit(documentId);
@@ -14,7 +22,8 @@ export class FileSignatureUpdater {
     signatureRequestIds.forEach(requestId => {
 
       const requestToSign = actualFile.signatureRequests.find((req: ISignatureRequest) => req.id === requestId);
-        if (!requestToSign) 
+       // проверяем наличие запроса на подпись, подписание выполняется, если он был создан
+      if (!requestToSign)
           return;
 
         const fileId = Guid.newGuid();
@@ -24,16 +33,19 @@ export class FileSignatureUpdater {
           type: 'application/octet-stream' ,
           lastModified: creationDate.getUTCDate()
         });
+
+        // вызываем IObjectBuilder и записываем информацию о подписи в IObject
         builder
-          .addFile(fileId, file, creationDate, creationDate, creationDate)
+          .addFile(fileId, file, creationDate, creationDate, creationDate) // добавляем файл документа в IObject
           .setSignatures(actualFile.body.id)
             .edit(requestToSign)
             .withSign(fileId)
-            .withPublicKeyOid(publicKeyOid)
+            .withPublicKeyOid(publicKeyOid) // записываем информацию о криптопровайдере
             .withObjectId(documentId)
-            .withLastSignCadesType(CadesType.NotCades);
+            .withLastSignCadesType(CadesType.NotCades); // устанавливаем формат подписи
     });
 
+    // применяем изменения
     return modifier.apply();
   }
 }

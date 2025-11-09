@@ -31,8 +31,9 @@ export class CryptoProviderFnv1Extension implements ICryptoProvider, IInitializa
     this._fileSignatureUpdater = new FileSignatureUpdater(injectionSource.modifierProvider);
   }
 
+  // проверка на то, что плагин может проверить алгоритм подписания
   canProcessAlgorithms(publicKeyOid: string): boolean {
-    return this._signatureAlgorithm == publicKeyOid;
+    return this._signatureAlgorithm === publicKeyOid;
   }
 
   canProcessSignature(signatureFile: ArrayBuffer): boolean {
@@ -46,17 +47,18 @@ export class CryptoProviderFnv1Extension implements ICryptoProvider, IInitializa
   }
 
   sign(documentId: string, actualFile: IFile, arrayBuffer: ArrayBuffer, certificate: ICertificate, signatureRequestIds: string[]): Observable<string> {
-    const signature = this.getBase64String(arrayBuffer, certificate);
+    const signature = this.getBase64String(arrayBuffer, certificate); // вычисляем хэш файлов документа и подписи
     return this._fileSignatureUpdater.setSignToObjectFile(documentId, actualFile, signature, certificate.publicKeyOid, signatureRequestIds)
       .pipe(map(() => signature));
   }
 
   verify(file: ArrayBuffer, sign: ArrayBuffer, signatureRequest: ISignatureRequest): Observable<ISignatureVerificationResult> {
     try {
-      const fileHash = this.calculateFnv1aHash(file);
-      const signDecodedString = base64DecodeUnicode(convertToString(sign));
-      const signature: ISignatureDataObject = JSON.parse(signDecodedString);
+      const fileHash = this.calculateFnv1aHash(file); // вычисляем хэш файла документа, которым подписываем
+      const signDecodedString = base64DecodeUnicode(convertToString(sign)); //
+      const signature: ISignatureDataObject = JSON.parse(signDecodedString); // читаем метаданные из запроса на подпись
 
+      // сравниваем хэш документа и хэш подписанного документа, если они совпали - то считаем подпись валидной и отдаем в результате проверки метаданные
       if (fileHash === signature.fileHash) {
         return of({
           verificationStatus: SignatureVerificationStatus.Valid,
@@ -65,7 +67,7 @@ export class CryptoProviderFnv1Extension implements ICryptoProvider, IInitializa
           signerName: signature.subject,
         } as ISignatureVerificationResult);
       }
-
+      // сюда могут быть добавлены различные проверки и статусы ответа криптопровайдера
       const notMatchError: string = 'The file hashes don\'t match';
       return of({
         verificationStatus: SignatureVerificationStatus.Invalid,
@@ -86,12 +88,13 @@ export class CryptoProviderFnv1Extension implements ICryptoProvider, IInitializa
       return of({
         verificationStatus: SignatureVerificationStatus.Error,
         error: (error as Error)?.message,
-          customState: state,
+        customState: state,
         signerNameForeground: '#FF0000'
       } as ISignatureVerificationResult);
     }
   }
 
+  // метод используется для проверки открепленных подписей
   verifyImportedSignature(file: ArrayBuffer, sign: ArrayBuffer): Observable<IImportedSignatureVerificationResult> {
     try {
       const fileHash = this.calculateFnv1aHash(file);
@@ -125,6 +128,7 @@ export class CryptoProviderFnv1Extension implements ICryptoProvider, IInitializa
     }
   }
 
+  // метод для получения списка сертификатов подписания пользователя
   getCertificates(): Observable<ICertificate[]> {
     const cert = {
       issuer: "Test Certificate Issuer",
